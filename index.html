@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>الجدول الزمني – توريد متطلبات شبكة</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f7f9;--card:#fff;--tx:#14213d;--mut:#667085;--bd:#e3e6ec;--a:#0b6e99;--b:#2a9d8f;--c:#e9a23b;--d:#8e5bd0;--e:#d1495b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1420;--card:#171e2e;--tx:#e8ecf4;--mut:#93a0b8;--bd:#27314a}}
+:root[data-theme="dark"]{--bg:#0f1420;--card:#171e2e;--tx:#e8ecf4;--mut:#93a0b8;--bd:#27314a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.6}
+.w{max-width:1100px;margin:0 auto;padding:20px 14px 40px}
+h1{font-size:1.5rem;margin:0 0 4px}
+p.s{color:var(--mut);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
+.ctl{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+input{font:inherit;padding:6px 10px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+.kpi{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.kpi div{flex:1 1 130px;background:var(--bg);border-radius:10px;padding:8px 12px}
+.kpi b{display:block;font-size:1.15rem}
+.kpi span{color:var(--mut);font-size:.8rem}
+.sc{overflow-x:auto}
+.g{min-width:860px}
+.row{display:grid;grid-template-columns:230px repeat(19,1fr);align-items:center;border-bottom:1px solid var(--bd);min-height:40px}
+.row.h{font-size:.72rem;color:var(--mut);text-align:center;position:sticky}
+.row.h div:first-child{text-align:right}
+.n{font-size:.88rem;padding:4px 0 4px 8px}
+.n small{display:block;color:var(--mut);font-size:.72rem}
+.bar{height:20px;border-radius:6px;font-size:.68rem;color:#fff;text-align:center;line-height:20px;margin:0 1px;white-space:nowrap;overflow:hidden}
+.ph{font-weight:700;background:var(--bg)}
+.lg{display:flex;flex-wrap:wrap;gap:12px;font-size:.8rem;color:var(--mut);margin-top:8px}
+.lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-inline-end:4px;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th,td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--bd);vertical-align:top}
+th{color:var(--mut);font-weight:600}
+.sc2{overflow-x:auto}
+button{font:inherit;padding:6px 12px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);cursor:pointer}
+@media print{.ctl button{display:none}}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>الجدول الزمني للمناقصة – توريد متطلبات شبكة</h1>
+<p class="s">مخطط زمني مبدئي (19 أسبوع من توقيع العقد). غيّر تاريخ البداية وسيتحدّث كل شيء تلقائياً.</p>
+
+<div class="card">
+<div class="ctl">
+<label>تاريخ توقيع العقد / أمر التوريد: <input type="date" id="st"></label>
+<label>مدة التوريد (أسبوع): <input type="number" id="lt" min="4" max="30" value="12" style="width:70px"></label>
+<button onclick="window.print()">طباعة</button>
+</div>
+<div class="kpi" id="kpi"></div>
+</div>
+
+<div class="card sc"><div class="g" id="g"></div>
+<div class="lg">
+<span><i style="background:var(--a)"></i>إدارة وهندسة</span>
+<span><i style="background:var(--b)"></i>توريد وتصنيع</span>
+<span><i style="background:var(--c)"></i>شحن وفحص</span>
+<span><i style="background:var(--d)"></i>تركيب</span>
+<span><i style="background:var(--e)"></i>اختبار وتسليم</span>
+</div></div>
+
+<div class="card sc2">
+<table><thead><tr><th>المرحلة</th><th>البنود (حسب جدول الكميات)</th><th>من</th><th>إلى</th></tr></thead><tbody id="tb"></tbody></table>
+</div>
+<p class="s">ملاحظة: المدد افتراضية وتعتمد على مدة التوريد في كراسة الشروط ومواعيد المورّد؛ عدّلها حسب الشروط الفعلية.</p>
+</div>
+
+<script>
+const T=19;
+function plan(L){
+ // L = lead time for active equipment (weeks)
+ const act=Math.max(4,Math.min(L,16));
+ return [
+ {p:"1) إدارة العقد والهندسة"},
+ {n:"توقيع العقد وكفالة حسن التنفيذ",d:"",s:0,e:1,c:"a"},
+ {n:"المسح الميداني والمخططات التنفيذية",d:"مسارات الألياف والنحاس، أماكن الكبائن والمخارج",s:0,e:3,c:"a"},
+ {n:"اعتماد العينات وكتالوجات المواد",d:"كل البنود حسب المواصفات المرفقة",s:1,e:3,c:"a"},
+ {p:"2) التوريد والتصنيع"},
+ {n:"كابلات الألياف (12 و24 شعيرة) والنحاس (10 و30 زوج)",d:"10000م + 10000م + 5000م + 5000م",s:3,e:9,c:"b"},
+ {n:"اللوحات السلبية والكبائن والمخارج",d:"لوحات ألياف 24، باتش بانل 24/48، كبائن 15U/27U/42U، فيش وصناديق",s:3,e:8,c:"b"},
+ {n:"أجهزة الشبكة الفعّالة",d:"سويتشات 24/48، راوتر، سويتش توزيع رئيسي، SFP",s:3,e:3+act,c:"b"},
+ {n:"نظام الطاقة الاحتياطي UPS والطابعات والمستلزمات",d:"UPS 1500 وات، طابعات كروت، أحبار، أفلام، كروت",s:3,e:9,c:"b"},
+ {p:"3) الشحن والفحص"},
+ {n:"الشحن والتخليص الجمركي",d:"",s:Math.min(8,3+act-3),e:Math.min(13,3+act+1),c:"c"},
+ {n:"الاستلام والفحص الفني (تسليم دفعات)",d:"مطابقة المواصفات وجدول الكميات",s:Math.min(9,3+act-2),e:Math.min(14,3+act+2),c:"c"},
+ {p:"4) التركيب"},
+ {n:"تمديد الكابلات وتركيب الكبائن واللوحات",d:"",s:10,e:16,c:"d"},
+ {n:"تركيب وتهيئة الأجهزة الفعّالة وUPS",d:"",s:13,e:17,c:"d"},
+ {p:"5) الاختبار والتسليم"},
+ {n:"الاختبارات (OTDR / Fluke) والتشغيل التجريبي",d:"",s:15,e:18,c:"e"},
+ {n:"التدريب والتسليم النهائي والمستندات",d:"",s:17,e:19,c:"e"}
+ ];
+}
+const fmt=d=>d.toLocaleDateString("ar-EG",{day:"numeric",month:"short",year:"numeric"});
+const add=(d,w)=>{const x=new Date(d);x.setDate(x.getDate()+w*7);return x};
+function render(){
+ const v=document.getElementById("st").value;
+ const st=v?new Date(v+"T00:00:00"):new Date();
+ const L=+document.getElementById("lt").value||12;
+ const rows=plan(L);
+ let h='<div class="row h"><div>النشاط</div>';
+ for(let i=1;i<=T;i++)h+=`<div>${i}</div>`;
+ h+='</div>';
+ let t="",ph="";
+ rows.forEach(r=>{
+  if(r.p){ph=r.p;h+=`<div class="row ph"><div class="n" style="grid-column:1/-1">${r.p}</div></div>`;return}
+  h+=`<div class="row"><div class="n">${r.n}${r.d?`<small>${r.d}</small>`:""}</div><div style="grid-column:${r.s+2}/${r.e+2}"><div class="bar" style="background:var(--${r.c})">${r.e-r.s} أسبوع</div></div></div>`;
+  t+=`<tr><td>${ph.replace(/^\d\) /,"")}</td><td><b>${r.n}</b>${r.d?`<br><span style="color:var(--mut)">${r.d}</span>`:""}</td><td>${fmt(add(st,r.s))}</td><td>${fmt(add(st,r.e))}</td></tr>`;
+ });
+ document.getElementById("g").innerHTML=h;
+ document.getElementById("tb").innerHTML=t;
+ document.getElementById("kpi").innerHTML=
+  `<div><b>${fmt(st)}</b><span>بداية العقد</span></div>
+   <div><b>${fmt(add(st,Math.min(14,3+Math.max(4,Math.min(L,16))+2)))}</b><span>اكتمال التوريد تقريباً</span></div>
+   <div><b>${fmt(add(st,T))}</b><span>التسليم النهائي</span></div>
+   <div><b>${T} أسبوع</b><span>إجمالي المدة</span></div>`;
+}
+const today=new Date();document.getElementById("st").value=today.toISOString().slice(0,10);
+["st","lt"].forEach(i=>document.getElementById(i).addEventListener("input",render));
+render();
+</script>
+</body>
+</html>
